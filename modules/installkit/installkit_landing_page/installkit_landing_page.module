@@ -1,0 +1,89 @@
+<?php
+/**
+ * @file
+ * Module file for InstallKit Landing Page.
+ */
+
+/**
+ * Machine name of the InstallKit Landing Page node type.
+ */
+define('INSTALLKIT_LANDING_PAGE_NODE_TYPE', 'installkit_landing_page');
+
+// Include the primary features file.
+include_once 'installkit_landing_page.features.inc';
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function installkit_landing_page_module_implements_alter(&$implementations, $hook) {
+  switch ($hook) {
+    case 'form_alter':
+      $group = $implementations['installkit_landing_page'];
+      unset($implementations['installkit_landing_page']);
+      $implementations['installkit_landing_page'] = $group;
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function installkit_landing_page_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'node_type_form':
+      // At times, the `hook_form_FORM_ID_alter`, when executed does not contain
+      // all form properties in which case, executing with the implementation
+      // of the `hook_form_alter()` as it is executed after the specialized,
+      // does contain. A sample use case is the `entity_translation` which
+      // appends fields to the $form['comment'].
+      _installkit_landing_page_form_node_type_form_alter($form, $form_state);
+      break;
+  }
+}
+
+/**
+ * Returns a boolean to determine if comments are fully disabled.
+ *
+ * This boolean is primarily used for altering the node type form and hiding
+ * the "Comments" section of the form. Comment properties still exist, however,
+ * they are primarily hidden from the user which does not allow them to edit.
+ *
+ * @return bool
+ *   Returns TRUE if comments are disabled, otherwise FALSE.
+ */
+function installkit_landing_page_node_type_comments_disabled() {
+  return (bool) variable_get('installkit_landing_page_node_type_comments_disabled', TRUE);
+}
+
+/**
+ * Acts as a private implementation of hook_form_FORM_ID_alter().
+ *
+ * This function is invoked directly from the hook_form_alter() implementation,
+ * which is required as a result of order of operations for proper altering
+ * of the comments section of the node_type_form.
+ */
+function _installkit_landing_page_form_node_type_form_alter(&$form, &$form_state) {
+  if (isset($form['#node_type']) && INSTALLKIT_LANDING_PAGE_NODE_TYPE == $form['#node_type']->orig_type && installkit_landing_page_node_type_comments_disabled()) {
+    foreach ($form['comment'] as $form_field_name => $form_field) {
+      // Assume that any property of $form['comment'] that begins with `#` is an
+      // actual property of the container and not a subfield.
+      if (0 === strpos($form_field_name, '#')) {
+        unset($form['comment'][$form_field_name]);
+        continue;
+      }
+
+      $form_field['#type'] = 'hidden';
+      $form_field['#value'] = isset($form_field['#default_value']) ? $form_field['#default_value'] : NULL;
+
+      foreach ($form_field as $property_name => $property_value) {
+        if (!in_array($property_name, array('#access', '#after_build', '#default_value', '#element_validate', '#parents', '#post_render', '#prefix', '#pre_render', '#process', '#states', '#suffix', '#theme', '#theme_wrappers', '#tree', '#type', '#value', '#weight'))) {
+          unset($form_field[$property_name]);
+        }
+      }
+      unset($property_value, $property_name);
+
+      $form['comment'][$form_field_name] = $form_field;
+    }
+    unset($form_field, $form_field_name);
+  }
+}

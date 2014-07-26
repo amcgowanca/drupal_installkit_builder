@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the InstallKit Page feature.
+ */
+
+include_once 'installkit_page.features.inc';
