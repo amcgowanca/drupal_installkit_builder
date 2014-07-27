@@ -96,7 +96,6 @@ projects[views_php][version] = "1.0-alpha1"
 
 ; Download contributed themes.
 projects[ember][type] = "theme"
-projects[ember][subdir] = "themes"
 projects[ember][version] = "2.0-alpha2"
 
 ; Download required and suggested library packages.
