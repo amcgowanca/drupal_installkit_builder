@@ -21,6 +21,7 @@ dependencies[] = menu_attributes
 dependencies[] = menu_block
 dependencies[] = mlpanels
 dependencies[] = mpac
+dependencies[] = navbar
 dependencies[] = page_manager
 dependencies[] = panelizer
 dependencies[] = panels
