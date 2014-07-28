@@ -33,7 +33,7 @@ before_script:
 script:
   - drush make build-installkit_builder.make packaged --no-cache --no-gitinfofile --yes
   - cd packaged
-  - drush site-install installkit_builder --account-name=admin --account-pass=password --account-mail=admin@localhost.com --site-mail=admin@localhost.com --site-name=InstallKit --db-url=mysql://root@localhost/installkit --yes
+  - drush site-install installkit_builder --account-name=admin --account-pass=password --account-mail=admin@localhost.com --site-mail=admin@localhost.com --site-name=InstallKit --db-url=mysql://root@localhost/installkit_builder --yes
   - drush fra --yes
   - drush cc all
   - cd ..
